@@ -158,6 +158,15 @@ function _website_setup_permissions() {
 
   $roles = user_roles();
 
+  // Create a role for managers.
+  if (!in_array('manager', $roles)) {
+    $manager_role = new stdClass();
+    $manager_role->name = 'manager';
+    $manager_role->weight = 2;
+    user_role_save($manager_role);
+    $roles = user_roles();
+  }
+
   foreach ($roles as $key => $value) {
     if ($value == 'administrator') {
       user_role_grant_permissions($key array_keys(module_invoke_all('permission')));
