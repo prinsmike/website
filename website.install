@@ -1,0 +1,1554 @@
+<?php
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ */
+function website_install() {
+
+  // Install some text formats and setup filters.
+  //_website_install_text_formats();
+  // Install default vocabularies.
+  //_website_install_vocabulary();
+  // Install content types (page and article).
+  //_website_install_content_types();
+  // Install menus and some links.
+  _website_install_menus();
+  // Install the default themes.
+  _website_install_themes();
+  // Install some default blocks.
+  _website_install_blocks();
+  // Setup default roles and permissions.
+  _website_install_roles_and_permissions();
+  // Install default sweaver setup.
+  //_website_install_sweaver();
+  // Install sweaver default styles.
+  // Setup default variables.
+  _website_setup_variables();
+  // Install IMCE for inline images.
+  //_website_install_imce();
+
+  // Enable the admin theme.
+  db_update('system')
+      ->fields(array('status' => 1))
+      ->condition('type', 'theme')
+      ->condition('name', 'seven')
+      ->execute();
+  variable_set('admin_theme', 'seven');
+  variable_set('node_admin_theme', '1');
+}
+
+function _website_install_sweaver() {
+  // Setup Sweaver
+
+  variable_set('sweaver_plugin_status_sweaver_plugin_advanced', 1);
+  variable_set('sweaver_plugin_status_sweaver_plugin_images', 1);
+
+  // float property
+  $sweaver_float_array = array(
+    'none' => 'None',
+    'inherit' => 'Inherit',
+    'left' => 'Left',
+    'right' => 'Right',
+  );
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'float', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'float',
+          'description' => 'Float',
+          'property' => 'float',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_float_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+      ->fields(array(
+          'description' => 'Float',
+          'property' => 'float',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_float_array),
+        ))->condition('name', 'float', '=')
+        ->execute();
+  }
+
+  // clear property
+  $sweaver_clear_array = array(
+    'none' => 'None',
+    'inherit' => 'Inherit',
+    'left' => 'Left',
+    'right' => 'Right',
+    'both' => 'Both',
+  );
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'clear', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'clear',
+          'description' => 'Clear',
+          'property' => 'clear',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_clear_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Clear',
+          'property' => 'clear',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_clear_array),
+        ))->condition('name', 'clear', '=')
+        ->execute();
+  }
+
+  // list_style_type property
+  $sweaver_list_style_type_array = array(
+    'none' => 'None',
+    'inherit' => 'Inherit',
+    'circle' => 'Circle',
+    'disc' => 'Disc',
+    'square' => 'Square',
+    'decimal' => 'Decimal',
+    'decimal-leading-zero' => 'Decimal (Leading Zero)',
+    'lower-alpha' => 'Lower Alpha',
+    'lower-greek' => 'Lower Greek',
+    'lower-latin' => 'Lower Latin',
+    'lower-roman' => 'Lower Roman',
+    'upper-alpha' => 'Upper Alpha',
+    'upper-latin' => 'Upper Latin',
+    'upper-roman' => 'Upper Roman',
+    'armenian' => 'Armenian',
+    'georgian' => 'Georgian',
+  );
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'list_style_type', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'list_style_type',
+          'description' => 'List Style Type',
+          'property' => 'list-style-type',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_list_style_type_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'List Style Type',
+          'property' => 'list-style-type',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_list_style_type_array),
+        ))->condition('name', 'list_style_type', '=')
+        ->execute();
+  }
+
+  // list_style_image property
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'list_style_image', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'list_style_image',
+          'description' => 'List Style Image',
+          'property' => 'list-style-image',
+          'property_parent' => '',
+          'property_type' => 'image',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize(array()),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'List Style Image',
+          'property' => 'list-style-image',
+          'property_parent' => '',
+          'property_type' => 'image',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize(array()),
+        ))->condition('name', 'list_style_image', '=')
+        ->execute();
+  }
+
+  // cursor property
+  $sweaver_cursor_array = array(
+    'auto' => 'Auto',
+    'inherit' => 'Inherit',
+    'default' => 'Default',
+    'crosshair' => 'Crosshair',
+    'help' => 'Help',
+    'move' => 'Move',
+    'pointer' => 'Pointer',
+    'progress' => 'Progress',
+    'text' => 'Text',
+    'wait' => 'Wait',
+    'e-resize' => 'E-Resize',
+    'n-resize' => 'N-Resize',
+    'ne-resize' => 'NE-Resize',
+    'nw-resize' => 'NW-Resize',
+    's-resize' => 'S-Resize',
+    'se-resize' => 'SE-Resize',
+    'sw-resize' => 'SW-Resize',
+    'w-resize' => 'W-Resize',
+  );
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'cursor', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'cursor',
+          'description' => 'Cursor',
+          'property' => 'cursor',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_cursor_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Cursor',
+          'property' => 'cursor',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_cursor_array),
+        ))->condition('name', 'cursor', '=')
+        ->execute();
+  }
+
+  // list_style_position property
+  $sweaver_list_style_position_array = array(
+    'outside' => 'Outside',
+    'inside' => 'Inside',
+    'inherit' => 'Inherit',
+  );
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'list_style_position', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'list_style_position',
+          'description' => 'List Style Position',
+          'property' => 'list_style_position',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_list_style_position_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'List Style Position',
+          'property' => 'list_style_position',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_list_style_position_array),
+        ))->condition('name', 'list_style_position', '=')
+        ->execute();
+  }
+
+  /**
+   * Seems to be some kind of conflict with the position property, so removing
+   * for the time being. 
+   */
+  // position property
+  /* $sweaver_position_array = array(
+    'absolute' => 'Absolute',
+    'fixed' => 'Fixed',
+    'relative' => 'Relative',
+    'static' => 'Static',
+    'inherit' => 'Inherit',
+    );
+    $result = db_select('sweaver_property', 's')
+    ->fields('s', array('name'))
+    ->condition('name', 'position', '=')
+    ->execute()
+    ->fetchAssoc();
+
+    if (!$result) {
+    db_insert('sweaver_property')
+    ->fields(array(
+    'name' => 'position',
+    'description' => 'Position',
+    'property' => 'position',
+    'property_parent' => '',
+    'property_type' => 'select',
+    'property_prefix' => '',
+    'property_suffix' => '',
+    'property_slider_min' => 1,
+    'property_slider_max' => 72,
+    'property_options' => serialize($sweaver_position_array),
+    ))->execute();
+    } */
+
+  // display property
+  $sweaver_display_array = array(
+    'none' => 'None',
+    'block' => 'Block',
+    'inline' => 'Inline',
+    'inline-block' => 'Inline Block',
+    'list-item' => 'List item',
+    'inherit' => 'Inherit',
+  );
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'display', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'display',
+          'description' => 'Display',
+          'property' => 'display',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_display_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Display',
+          'property' => 'display',
+          'property_parent' => '',
+          'property_type' => 'select',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_display_array),
+        ))->condition('name', 'display', '=')
+        ->execute();
+  }
+
+  // Border Radius
+
+  $sweaver_border_radius_array = array();
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'border-radius', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'border-radius',
+          'description' => 'Border radius',
+          'property' => 'border-radius',
+          'property_parent' => '',
+          'property_type' => 'parent',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_border_radius_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Border radius',
+          'property' => 'border-radius',
+          'property_parent' => '',
+          'property_type' => 'parent',
+          'property_prefix' => '',
+          'property_suffix' => '',
+          'property_slider_min' => 1,
+          'property_slider_max' => 72,
+          'property_options' => serialize($sweaver_border_radius_array),
+        ))->condition('name', 'border-radius', '=')
+        ->execute();
+  }
+
+  // Border Top Left Radius 
+
+  $sweaver_border_top_left_radius_array = array();
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'border-top-left-radius', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'border-top-left-radius',
+          'description' => 'Top left',
+          'property' => 'border-top-left-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_top_left_radius_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Top left',
+          'property' => 'border-top-left-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_top_left_radius_array),
+        ))->condition('name', 'border-top-left-radius', '=')
+        ->execute();
+  }
+
+  // Border Top Right Radius
+
+  $sweaver_border_top_right_radius_array = array();
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'border-top-right-radius', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'border-top-right-radius',
+          'description' => 'Top right',
+          'property' => 'border-top-right-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_top_right_radius_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Top right',
+          'property' => 'border-top-right-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_top_right_radius_array),
+        ))->condition('name', 'border-top-right-radius', '=')
+        ->execute();
+  }
+
+  // Border Bottom Right Radius
+
+  $sweaver_border_bottom_right_radius_array = array();
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'border-bottom-right-radius', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'border-bottom-right-radius',
+          'description' => 'Bottom right',
+          'property' => 'border-bottom-right-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_bottom_right_radius_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Bottom right',
+          'property' => 'border-bottom-right-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_bottom_right_radius_array),
+        ))->condition('name', 'border-bottom-right-radius', '=')
+        ->execute();
+  }
+
+  // Border Bottom Left Radius
+
+  $sweaver_border_bottom_left_radius_array = array();
+
+  $result = db_select('sweaver_property', 's')
+      ->fields('s', array('name'))
+      ->condition('name', 'border-bottom-left-radius', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_property')
+        ->fields(array(
+          'name' => 'border-bottom-left-radius',
+          'description' => 'Bottom left',
+          'property' => 'border-bottom-left-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_bottom_left_radius_array),
+        ))->execute();
+  } else {
+    db_update('sweaver_property')
+        ->fields(array(
+          'description' => 'Bottom left',
+          'property' => 'border-bottom-left-radius',
+          'property_parent' => 'border-radius',
+          'property_type' => 'slider',
+          'property_prefix' => '',
+          'property_suffix' => 'px',
+          'property_slider_min' => 1,
+          'property_slider_max' => 45,
+          'property_options' => serialize($sweaver_border_bottom_right_radius_array),
+        ))->condition('name', 'border-bottom-left-radius', '=')
+        ->execute();
+  }
+
+  // block type
+  $sweaver_block_array = array(
+    'float' => 'float',
+    'clear' => 'clear',
+    'list_style_type' => 'list_style_type',
+    'list_style_image' => 'list_style_image',
+    'cursor' => 'cursor',
+    'list_style_position' => 'list_style_position',
+    /* 'position' => 'position', */
+    'display' => 'display',
+    'border-top-left-radius' => 'border-top-left-radius',
+    'border-top-right-radius' => 'border-top-right-radius',
+    'border-bottom-right-radius' => 'border-bottom-right-radius',
+    'border-bottom-left-radius' => 'border-bottom-left-radius',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'padding-top' => 'padding-top',
+    'padding-right' => 'padding-right',
+    'padding-bottom' => 'padding-bottom',
+    'padding-left' => 'padding-left',
+    'margin-top' => 'margin-top',
+    'margin-right' => 'margin-right',
+    'margin-bottom' => 'margin-bottom',
+    'margin-left' => 'margin-left',
+    'border-top-width' => 'border-top-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-left-width' => 'border-left-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'vertical-align' => 'vertical-align',
+    'width' => 'width',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'block', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'block',
+          'description' => 'Block',
+          'type_options' => serialize($sweaver_block_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_block_array),
+        ))
+        ->condition('name', 'block', '=')
+        ->execute();
+  }
+
+  // inline type
+
+  $sweaver_inline_array = array(
+    'cursor' => 'cursor',
+    'display' => 'display',
+    'border-top-left-radius' => 'border-top-left-radius',
+    'border-top-right-radius' => 'border-top-right-radius',
+    'border-bottom-right-radius' => 'border-bottom-right-radius',
+    'border-bottom-left-radius' => 'border-bottom-left-radius',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'border-top-width' => 'border-top-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-left-width' => 'border-left-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'vertical-align' => 'vertical-align',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'inline', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'inline',
+          'description' => 'Inline',
+          'type_options' => serialize($sweaver_inline_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_inline_array),
+        ))
+        ->condition('name', 'inline', '=')
+        ->execute();
+  }
+
+  // inline-block type
+
+  $sweaver_inline_block_array = array(
+    'cursor' => 'cursor',
+    'display' => 'display',
+    'border-top-left-radius' => 'border-top-left-radius',
+    'border-top-right-radius' => 'border-top-right-radius',
+    'border-bottom-right-radius' => 'border-bottom-right-radius',
+    'border-bottom-left-radius' => 'border-bottom-left-radius',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'padding-top' => 'padding-top',
+    'padding-right' => 'padding-right',
+    'padding-bottom' => 'padding-bottom',
+    'padding-left' => 'padding-left',
+    'margin-top' => 'margin-top',
+    'margin-right' => 'margin-right',
+    'margin-bottom' => 'margin-bottom',
+    'margin-left' => 'margin-left',
+    'border-top-width' => 'border-top-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-left-width' => 'border-left-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'vertical-align' => 'vertical-align',
+    'width' => 'width',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'inline-block', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'inline-block',
+          'description' => 'Inline block',
+          'type_options' => serialize($sweaver_inline_block_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_inline_block_array),
+        ))
+        ->condition('name', 'inline-block', '=')
+        ->execute();
+  }
+
+  // List item
+
+  $sweaver_list_item_array = array(
+    'list_style_type' => 'list_style_type',
+    'list_style_image' => 'list_style_image',
+    'cursor' => 'cursor',
+    'list_style_position' => 'list_style_position',
+    'display' => 'display',
+    'border-top-left-radius' => 'border-top-left-radius',
+    'border-top-right-radius' => 'border-top-right-radius',
+    'border-bottom-right-radius' => 'border-bottom-right-radius',
+    'border-bottom-left-radius' => 'border-bottom-left-radius',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'padding-top' => 'padding-top',
+    'padding-right' => 'padding-right',
+    'padding-bottom' => 'padding-bottom',
+    'padding-left' => 'padding-left',
+    'margin-top' => 'margin-top',
+    'margin-right' => 'margin-right',
+    'margin-bottom' => 'margin-bottom',
+    'margin-left' => 'margin-left',
+    'border-top-width' => 'border-top-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-left-width' => 'border-left-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'vertical-align' => 'vertical-align',
+    'width' => 'width',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'list-item', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'list-item',
+          'description' => 'List item',
+          'type_options' => serialize($sweaver_list_item_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_list_item_array),
+        ))
+        ->condition('name', 'list-item', '=')
+        ->execute();
+  }
+
+  // inline-table type
+
+  $sweaver_inline_table_array = array(
+    'cursor' => 'cursor',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'margin-top' => 'margin-top',
+    'margin-left' => 'margin-left',
+    'margin-right' => 'margin-right',
+    'margin-bottom' => 'margin-bottom',
+    'border-top-width' => 'border-top-width',
+    'border-left-width' => 'border-left-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'width' => 'width',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'inline-table', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'inline-table',
+          'description' => 'Inline table',
+          'type_options' => serialize($sweaver_inline_table_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_inline_table_array),
+        ))
+        ->condition('name', 'inline-table', '=')
+        ->execute();
+  }
+
+  // table type
+
+  $sweaver_table_array = array(
+    'cursor' => 'cursor',
+    'display' => 'display',
+    'z_index' => 'z_index',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'margin-top' => 'margin-top',
+    'margin-left' => 'margin-left',
+    'margin-right' => 'margin-right',
+    'margin-bottom' => 'margin-bottom',
+    'border-top-width' => 'border-top-width',
+    'border-left-width' => 'border-left-width',
+    'border-right-width' => 'border-right-width',
+    'border-bottom-width' => 'border-bottom-width',
+    'border-color' => 'border-color',
+    'border-style' => 'border-style',
+    'border-collapse' => 'border-collapse',
+    'border-spacing' => 'border-spacing',
+    'width' => 'width',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'table', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'table',
+          'description' => 'Table',
+          'type_options' => serialize($sweaver_table_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_table_array),
+        ))
+        ->condition('name', 'table', '=')
+        ->execute();
+  }
+
+  // table-cell type
+
+  $sweaver_table_cell_array = array(
+    'cursor' => 'cursor',
+    'display' => 'display',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'padding-top' => 'padding-top',
+    'padding-left' => 'padding-left',
+    'padding-right' => 'padding-right',
+    'padding-bottom' => 'padding-bottom',
+    'vertical-align' => 'vertical-align',
+    'height' => 'height',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'table-cell', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'table-cell',
+          'description' => 'Table cell',
+          'type_options' => serialize($sweaver_table_cell_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_table_cell_array),
+        ))
+        ->condition('name', 'table-cell', '=')
+        ->execute();
+  }
+
+  // table-row type
+
+  $sweaver_table_row_array = array(
+    'cursor' => 'cursor',
+    'display' => 'display',
+    'font-family' => 'font-family',
+    'font-style' => 'font-style',
+    'font-weight' => 'font-weight',
+    'font-size' => 'font-size',
+    'line-height' => 'line-height',
+    'text-align' => 'text-align',
+    'color' => 'color',
+    'text-decoration' => 'text-decoration',
+    'background-color' => 'background-color',
+    'background-image' => 'background-image',
+    'background-repeat' => 'background-repeat',
+    'background-position' => 'background-position',
+    'background-attachment' => 'background-attachment',
+    'vertical-align' => 'vertical-align',
+  );
+  $result = db_select('sweaver_type', 't')
+      ->fields('t', array('name'))
+      ->condition('name', 'table-row', '=')
+      ->execute()
+      ->fetchAssoc();
+
+  if (!$result) {
+    db_insert('sweaver_type')
+        ->fields(array(
+          'name' => 'table-row',
+          'description' => 'Table row',
+          'type_options' => serialize($sweaver_table_row_array),
+        ))->execute();
+  }
+  else {
+    db_update('sweaver_type')
+        ->fields(array(
+          'type_options' => serialize($sweaver_table_row_array),
+        ))
+        ->condition('name', 'table-row', '=')
+        ->execute();
+  }
+
+  $sweaver_editor_form_config = array(
+    'four' =>
+    array(
+      'properties' =>
+      array(
+        -50 => 'height',
+        -49 => 'width',
+        -48 => 'float',
+        -47 => 'clear',
+        -46 => 'display',
+        -45 => 'cursor',
+        -44 => 'list_style_type',
+        -43 => 'list_style_image',
+        -42 => 'list_style_position',
+      ),
+      'title' => 'Other',
+    ),
+    'three' =>
+    array(
+      'properties' =>
+      array(
+        -50 => 'position-settings',
+        -49 => 'border-style',
+        -48 => 'border-color',
+        -47 => 'border-collapse',
+        -46 => 'border-spacing',
+        -45 => 'border-radius',
+      ),
+      'title' => 'Borders & Spacing',
+    ),
+    'one' =>
+    array(
+      'properties' =>
+      array(
+        0 => 'font-family',
+        1 => 'font-properties-wrapper',
+        2 => 'vertical-align',
+      ),
+      'title' => 'Font',
+    ),
+    'two' =>
+    array(
+      'properties' =>
+      array(
+        0 => 'background-color',
+        1 => 'background-image',
+        2 => 'background-repeat',
+        3 => 'background-attachment',
+        4 => 'background-position',
+      ),
+      'title' => 'Background',
+    ),
+  );
+  variable_set('sweaver_editor_form_configuration', $sweaver_editor_form_config);
+}
+
+function _website_install_menus($update = FALSE) {
+
+  // Create some menu links.
+  $links = array(
+    array(
+      'link_title' => 'Home',
+      'link_path' => '<front>',
+      'menu_name' => 'main-menu',
+      'weight' => -45,
+      ));
+  
+  foreach ($links as $item) {
+    menu_link_save($item);
+  }
+
+  // Update the menu router information.
+  menu_rebuild();
+}
+
+function _website_install_themes() {
+  // Any themes without keys here will get numeric keys and so will be enabled,
+  // but not placed into variables.
+  $enable = array(
+    'theme_default' => 'bootstrap',
+    'admin_theme' => 'seven',
+      //'zen'
+  );
+  theme_enable($enable);
+
+  foreach ($enable as $var => $theme) {
+    if (!is_numeric($var)) {
+      variable_set($var, $theme);
+    }
+  }
+
+  // Disable the default Bartik theme
+  theme_disable(array('bartik'));
+
+  variable_set('theme_default', 'bootstrap');
+}
+
+function _website_install_blocks() {
+  // Enable some standard blocks.
+  $default_theme = variable_get('theme_default', 'corolla');
+  $admin_theme = 'seven';
+  $values = array(
+    array(
+      'module' => 'system',
+      'delta' => 'main',
+      'theme' => $default_theme,
+      'status' => 1,
+      'weight' => 0,
+      'region' => 'content',
+      'pages' => '',
+      'cache' => -1,
+    ),
+    array(
+      'module' => 'system',
+      'delta' => 'main',
+      'theme' => $admin_theme,
+      'status' => 1,
+      'weight' => 0,
+      'region' => 'content',
+      'pages' => '',
+      'cache' => -1,
+    ),
+    array(
+      'module' => 'system',
+      'delta' => 'help',
+      'theme' => $admin_theme,
+      'status' => 1,
+      'weight' => 0,
+      'region' => 'help',
+      'pages' => '',
+      'cache' => -1,
+    ),
+    array(
+      'module' => 'user',
+      'delta' => 'login',
+      'theme' => $admin_theme,
+      'status' => 1,
+      'weight' => 10,
+      'region' => 'content',
+      'pages' => '',
+      'cache' => -1,
+    ),
+  );
+  $query = db_insert('block')->fields(array('module', 'delta', 'theme', 'status', 'weight', 'region', 'pages', 'cache'));
+  foreach ($values as $record) {
+    $query->values($record);
+  }
+  $query->execute();
+}
+
+function _website_install_roles_and_permissions() {
+  // Enable default permissions for system roles.
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array(
+    'access content',
+    'access comments',
+    'access site-wide contact form',
+    'vote on polls',
+    'search content',
+    'use advanced search',
+    //'use text format filtered_html',
+  ));
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array(
+    'access content',
+    'access comments',
+    'post comments',
+    'skip comment approval',
+    'access site-wide contact form',
+    'vote on polls',
+    'search content',
+    'use advanced search',
+    //'use text format filtered_html',
+  ));
+
+  // Create a default role for site administrators, with all available permissions assigned.
+  $admin_role = new stdClass();
+  $admin_role->name = 'administrator';
+  $admin_role->weight = 2;
+  user_role_save($admin_role);
+  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+  // Set this as the administrator role.
+  variable_set('user_admin_role', $admin_role->rid);
+
+  // Assign user 1 the "administrator" role.
+  db_insert('users_roles')
+      ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+      ->execute();
+
+  _website_setup_manager_role();
+  _website_setup_designer_role();
+}
+
+function _website_setup_manager_role() {
+  // Create a role for managers.
+  $manager_role = new stdClass();
+  $manager_role->name = 'manager';
+  $manager_role->weight = 2;
+  user_role_save($manager_role);
+
+  $vocabs = taxonomy_get_vocabularies();
+  foreach ($vocabs as $vocab) {
+    if ($vocab->name == 'Tags') {
+      $vocab_id = $vocab->vid;
+    }
+  }
+
+  user_role_grant_permissions($manager_role->rid, array(
+    'view advanced help topic',
+    'view advanced help popup',
+    'view advanced help index',
+    'administer blocks',
+    'administer comments',
+    'access comments',
+    'post comments',
+    'skip comment approval',
+    'edit own comments',
+    'administer contact forms',
+    'access site-wide contact form',
+    'access user contact forms',
+    'access contextual links',
+    //'access dashboard',
+    //'view date repeats',
+    'manage features',
+    //'use text format filtered_html',
+    //'use text format full_html',
+    'administer image styles',
+    'administer menu',
+    'create mini panels',
+    'administer mini panels',
+    'bypass node access',
+    'administer nodes',
+    'access content overview',
+    'view own unpublished content',
+    'view revisions',
+    'revert revisions',
+    'delete revisions',
+    'create poll content',
+    'edit own poll content',
+    'edit any poll content',
+    'delete own poll content',
+    'delete any poll content',
+    //'access overlay',
+    'use page manager',
+    'use panels dashboard',
+    'view pane admin links',
+    'administer pane access',
+    'use panels in place editing',
+    'administer advanced pane settings',
+    'administer panels layouts',
+    'use panels caching features',
+    'administer url aliases',
+    'create url aliases',
+    'opt-in or out of tracking',
+    'vote on polls',
+    'cancel own vote',
+    'inspect all votes',
+    'administer search',
+    'search content',
+    'use advanced search',
+    'administer shortcuts',
+    'customize shortcut links',
+    'switch shortcut sets',
+    'administer statistics',
+    'access statistics',
+    'view post access counter',
+    'administer string overrides',
+    'administer site configuration',
+    'access administration pages',
+    'access site in maintenance mode',
+    'view the administration theme',
+    'access site reports',
+    'block IP addresses',
+    'administer taxonomy',
+    'access toolbar',
+    'administer users',
+    'access user profiles',
+    'change own username',
+    'access all views',
+    //'edit terms in ' . $vocab_id,
+    //'delete terms in ' . $vocab_id,
+    'access workbench',
+  ));
+}
+
+function _website_setup_designer_role() {
+  // Create a role for designers.
+  $designer_role = new stdClass();
+  $designer_role->name = 'designer';
+  $designer_role->weight = 2;
+  user_role_save($designer_role);
+
+  $vocabs = taxonomy_get_vocabularies();
+  foreach ($vocabs as $vocab) {
+    if ($vocab->name == 'Tags') {
+      $vocab_id = $vocab->vid;
+    }
+  }
+
+  user_role_grant_permissions($designer_role->rid, array(
+    'access administration pages',
+    'access all views',
+    'access comments',
+    'access content',
+    'access content overview',
+    'access contextual links',
+    //'access dashboard',
+    //'access overlay',
+    'access own webform results',
+    'access own webform submissions',
+    'access site in maintenance mode',
+    'access site-wide contact form',
+    'access toolbar',
+    'access user contact forms',
+    'access user profiles',
+    'administer advanced pane settings',
+    'administer blocks',
+    'administer comments',
+    //'administer group',
+    'administer image styles',
+    'administer menu',
+    'administer mini panels',
+    'administer page manager',
+    'administer pane access',
+    'administer panels layouts',
+    //'administer quicktabs',
+    'administer themes',
+    'bypass node access',
+    'bypass rules access',
+    'cancel account',
+    'cancel own vote',
+    'change own username',
+    'create mini panels',
+    'create poll content',
+    'create url aliases',
+    'create webform content',
+    'delete own poll content',
+    'delete own webform content',
+    'delete own webform submissions',
+    'edit own comments',
+    'edit own poll content',
+    'edit own webform content',
+    'edit own webform submissions',
+    'inspect all votes',
+    'post comments',
+    'search content',
+    'skip comment approval',
+    'use advanced search',
+    //'use editor',  // Sweaver
+    'use page manager',
+    'use panels caching features',
+    'use panels dashboard',
+    'use panels in place editing',
+    //'use text format filtered_html',
+    //'use text format full_html',
+    //'use text format full_html_code',
+    'view advanced help index',
+    'view advanced help popup',
+    'view advanced help topic',
+    //'view date repeats',
+    'view own unpublished content',
+    'view pane admin links',
+    'view post access counter',
+    'view revisions',
+    'view the administration theme',
+    'vote on polls',
+    'access workbench',
+  ));
+}
+
+function _website_setup_variables() {
+  
+  // Enable user picture support and set the default to a square thumbnail option.
+  variable_set('user_pictures', '1');
+  variable_set('user_picture_dimensions', '1024x1024');
+  variable_set('user_picture_file_size', '800');
+  variable_set('user_picture_style', 'thumbnail');
+
+  // Allow visitor account creation with administrative approval.
+  variable_set('user_register', USER_REGISTER_VISITORS);
+
+  // Setup Pathauto
+  variable_set('pathauto_node_poll_pattern', 'poll/[node:title]');
+  variable_set('pathauto_node_webform_pattern', 'form/[node:title]');
+
+  // Setup logintoboggan
+  _website_install_logintoboggan();
+
+  // Setup Website Packages
+  //_website_install_packages();
+}
+
+function _website_install_packages() {
+  $packages = array(
+    'starter' => array(
+      'name' => 'Starter',
+      'modules' => array(),
+      'features' => array(),
+    ),
+    'small_business' => array(
+      'name' => 'Small Business',
+      'modules' => array(
+        'date',
+        'date_api',
+        'date_popup',
+        'date_repeat',
+        'calendar',
+        'calendar_ical',
+        /* 'calendar_multiday' */
+        'nice_menus',
+        'taxonomy_menu',
+        'date_views',
+        'date_context',
+        'date_tools',
+      ),
+      'features' => array(
+        'product',
+        'service',
+        'date_migrate_example',
+      ),
+    ),
+    'property' => array(
+      'name' => 'Property',
+      'modules' => array(),
+      'features' => array(
+        'property',
+      ),
+    ),
+    'network' => array(
+      'name' => 'Network',
+      'modules' => array(
+        'imagecache_profiles',
+        'og',
+        'og_access',
+        'og_access_admins',
+        'og_context',
+        'og_field_access',
+        'og_ui',
+        'og_views',
+        'content_complete',
+        'quicktabs',
+        'quicktabs_tabstyles',
+        'og_create_perms',
+        'og_migrate',
+        'og_register',
+        'relation',
+        'relation_add',
+        'relation_dummy_field',
+        'relation_endpoint',
+        'relation_entity_collector',
+        'context',
+        'context_layouts',
+        'context_ui',
+      ),
+      'features' => array(
+        'og_example',
+      ),
+    ),
+  );
+  variable_set('website_packages', $packages);
+}
+
+
+
+function _website_install_logintoboggan() {
+  $authenticated_role = user_role_load_by_name('authenticated user');
+  variable_set('logintoboggan_immediate_login_on_register', 1);
+  variable_set('logintoboggan_login_successful_message', 1);
+  variable_set('logintoboggan_login_with_email', 1);
+  variable_set('logintoboggan_minimum_password_length', 8);
+  variable_set('logintoboggan_pre_auth_role', $authenticated_role->rid);
+  variable_set('logintoboggan_purge_unvalidated_user_interval', 604800);
+}
+
+function website_update_7101() {
+  /**
+   * The block type array wasn't installed correctly.
+   * We fixed the problem and now simply rerun the function
+   * to make sure that we can see all our options for block types.
+   */
+  //_website_install_sweaver();
+}
+
+function website_update_7102() {
+  /**
+   * Sweaver database setup has changed. 
+   */
+  //_website_install_sweaver();
+  
+  // Disabeling the dashboard and overlay modules.
+  module_disable(array('dashboard', 'overlay'), TRUE);
+  // Enabling the workbench module.
+  module_enable(array('workbench'), TRUE);
+  
+  $manager_role = user_role_load_by_name('Manager');
+  
+  $perms = array(  
+    'access workbench' => TRUE,
+  );
+  user_role_change_permissions($manager_role->rid, $perms);
+}
