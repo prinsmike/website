@@ -169,7 +169,7 @@ function _website_setup_permissions() {
 
   foreach ($roles as $key => $value) {
     if ($value == 'administrator') {
-      user_role_grant_permissions($key array_keys(module_invoke_all('permission')));
+      user_role_grant_permissions($key, array_keys(module_invoke_all('permission')));
     } else if ($value == 'manager') {
       _website_setup_manager_permissions($key);
     }
