@@ -89,5 +89,6 @@ dependencies[] = googleanalytics
 dependencies[] = chart
 dependencies[] = chart_views
 dependencies[] = system_charts
+dependencies[] = drupal_ace_editor
 
 files[] = website.profile
