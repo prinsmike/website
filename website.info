@@ -92,5 +92,6 @@ dependencies[] = system_charts
 dependencies[] = drupal_ace_editor
 dependencies[] = block_revisions
 dependencies[] = diff
+dependencies[] = jquery_update
 
 files[] = website.profile
